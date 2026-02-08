@@ -26,7 +26,7 @@ export const getApprovedPostsService = async ({
     let sql = `
       FROM posts
       JOIN categories ON posts.category_id = categories.id
-      JOIN users ON posts.author_id = users.id
+      JOIN users ON posts.user_id = users.id
       WHERE posts.status = 'approved'
     `;
   

@@ -8,7 +8,8 @@ const router = express.Router();
 
 router.post("/:id/like", verifyToken, toggleLike);
 router.post("/:id/save", verifyToken, toggleSave);
-router.post("/:id/comment", verifyToken, addComment);
+router.post("/:id/comments", verifyToken, addComment);
+
 
 
 

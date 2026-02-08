@@ -8,7 +8,8 @@ import {
   getApprovedPosts,
   approvePost,
   getPostsByCategory,
-  getPostsByAuthor
+  getPostsByAuthor,
+  getAllPostsAdmin
 } from "../controllers/post.controller.js";
 import { verifyToken } from "../middleware/auth.middleware.js";
 import { isAdmin } from "../middleware/role.middleware.js";
@@ -27,7 +28,7 @@ router.get("/", getApprovedPosts);                // semua post approved
 router.get("/category/:categoryId", getPostsByCategory);
 
 // ================= ADMIN =================
-router.get("/admin/all", verifyToken, isAdmin, getPosts);
+router.get("/admin/all", verifyToken, isAdmin, getAllPostsAdmin);
 router.patch("/:id/approve", verifyToken, isAdmin, approvePost);
 
 // ================= SINGLE POST (PALING BAWAH) =================

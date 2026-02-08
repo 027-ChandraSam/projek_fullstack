@@ -1,6 +1,6 @@
 import api from "./api";
 export const getAllPosts = () =>
-  api.get("/posts");
+  api.get("/posts/admin/all"); 
 
 export const getPostById = (id) =>
   api.get(`/posts/${id}`);
@@ -10,7 +10,6 @@ export const approvePost = (id) =>
 
 export const deletePost = (id) =>
   api.delete(`/posts/${id}`);
-
 
 // LIKE / UNLIKE
 export const toggleLike = (postId) =>
@@ -22,4 +21,4 @@ export const toggleSave = (postId) =>
 
 // COMMENT
 export const addComment = (postId, data) =>
-  api.post(`/posts/${postId}/comments`, data);
+  api.post(`/posts/${postId}/comments`, data); 

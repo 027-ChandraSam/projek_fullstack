@@ -76,7 +76,7 @@ export default function PostDetail() {
         comments: [
           {
             id: Date.now(),
-            username: user.username,
+            username: user_id.username,
             content: commentText
           },
           ...(prev.comments || [])
@@ -102,8 +102,8 @@ export default function PostDetail() {
         {new Date(post.created_at).toLocaleDateString()}
       </p>
 
-      <div className="prose prose-invert mb-8 border-b border-zinc-800 pb-6">
-        {post.content}
+      <div className="prose prose-invert mb-8 border-b border-zinc-800 pb-6"
+      dangerouslySetInnerHTML={{ __html: post.content }}>
       </div>
 
       {/* LIKE & SAVE */}

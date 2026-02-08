@@ -47,21 +47,7 @@ export default function Sidebar({ open, close }) {
                 className="block px-3 py-2 rounded hover:bg-zinc-800"
               >
                 ✍️ Create Post
-              </Link>
-              <Link
-                to="/save"
-                onClick={close}
-                className="block px-3 py-2 rounded hover:bg-zinc-800"
-              >
-                💾 Saved
-              </Link>
-              <Link
-                to="/like"
-                onClick={close}
-                className="block px-3 py-2 rounded hover:bg-zinc-800"
-              >
-                ❤️ Liked
-              </Link>
+              </Link> 
             </div>
           )}
 

@@ -7,7 +7,7 @@ export default function Home() {
   useEffect(() => {
     api.get("/posts")
       .then((res) => setPosts(res.data))
-      .catch(() => console.log("Gagal ambil post"));
+      .catch(() => console.log("Gagal amil post"));
   }, []);
 
   return (
@@ -26,8 +26,8 @@ export default function Home() {
           <p className="text-zinc-400 text-sm">
             by <a href="/posts/author/username">{post.username}</a>
           </p>
-          <p className="mt-2 text-zinc-300 line-clamp-3">
-            {post.content}
+          <p className="mt-2 text-zinc-300 line-clamp-3"
+           dangerouslySetInnerHTML={{ __html: post.content }}>
           </p>
         </div>
       ))}

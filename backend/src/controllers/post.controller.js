@@ -40,8 +40,8 @@ export const getPosts = async (req, res) => {
         posts.created_at,
         users.username
       FROM posts
-      JOIN users ON posts.author_id = users.id
-      
+      JOIN users ON posts.user_id = users.id
+      WHERE posts.status = 'approved'
     `;
 
     const params = [];
@@ -73,7 +73,7 @@ export const getPostById = async (req, res) => {
         posts.*,
         users.username
       FROM posts
-      JOIN users ON posts.author_id = users.id
+      JOIN users ON posts.user_id = users.id
       WHERE posts.id = ? AND posts.status = 'approved'
       `,
       [id]
@@ -159,8 +159,9 @@ export const getApprovedPosts = async (req, res) => {
         users.username,
         categories.name AS category_name
       FROM posts
-      JOIN users ON posts.author_id = users.id
-      LEFT JOIN categories ON posts.category_id = categories.id `;
+      JOIN users ON posts.user_id = users.id
+      LEFT JOIN categories ON posts.category_id = categories.id
+      WHERE posts.status = 'approved'`;
 
     const params = [];
 
@@ -203,7 +204,7 @@ export const getPostsByCategory = async (req, res) => {
   const [posts] = await db.query(
     `SELECT posts.*, users.username
      FROM posts
-     JOIN users ON posts.author_id = users.id
+     JOIN users ON posts.user_id = users.id
      WHERE posts.category_id = ? AND status = 'approved'`,
     [categoryId]
   );
@@ -225,7 +226,7 @@ export const getPostsByAuthor = async (req, res) => {
         posts.created_at,
         categories.name AS category
       FROM posts
-      JOIN users ON posts.author_id = users.id
+      JOIN users ON posts.user_id = users.id
       LEFT JOIN categories ON posts.category_id = categories.id
       WHERE users.username = ?
       AND posts.status = 'approved'
@@ -240,3 +241,18 @@ export const getPostsByAuthor = async (req, res) => {
   }
 };
 
+export const getAllPostsAdmin = async (req, res) => {
+  try {
+    const [rows] = await db.query(`
+      SELECT posts.*, users.username
+      FROM posts
+      JOIN users ON posts.user_id = users.id
+      ORDER BY posts.created_at DESC
+    `);
+
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};

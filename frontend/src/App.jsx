@@ -55,7 +55,6 @@ function App() {
           </MainLayout>
         }
       />
-
       {/* AUTH */}
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />

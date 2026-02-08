@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Editor } from "react-draft-wysiwyg";
 import { EditorState, convertToRaw } from "draft-js";
 import draftToHtml from "draftjs-to-html";
@@ -13,6 +13,21 @@ export default function CreatePost() {
   const [categoryId, setCategoryId] = useState("");
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const [loading, setLoading] = useState(false);
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await api.get("/categories");
+        setCategories(res.data);
+      } catch (err) {
+        console.error("Gagal ambil kategori", err);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -64,10 +79,14 @@ export default function CreatePost() {
           onChange={(e) => setCategoryId(e.target.value)}
         >
           <option value="">Pilih kategori</option>
-          <option value="1">Teknologi</option>
-          <option value="2">Programming</option>
-          <option value="3">Opini</option>
+
+          {categories.map((cat) => (
+            <option key={cat.id} value={cat.id}>
+              {cat.name}
+            </option>
+          ))}
         </select>
+
 
         {/* EDITOR */}
         <div className="bg-zinc-900 border border-zinc-700 rounded">
