@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getAllPosts, deletePost, approvePost } from "../services/post.sevice";
 import { FileText, CheckCircle, Clock } from "lucide-react";
+import ConfirmModal from "../components/ConfirmModal";
 
 export default function AdminDashboard() {
   const [posts, setPosts] = useState([]);
@@ -9,6 +10,12 @@ export default function AdminDashboard() {
     totalPosts: 0,
     pendingPosts: 0,
     approvedPosts: 0,
+  });
+
+  const [modal, setModal] = useState({
+    open: false,
+    action: null,
+    id: null,
   });
 
   useEffect(() => {
@@ -34,29 +41,32 @@ export default function AdminDashboard() {
     }
   };
 
-  const handleApprove = async (id) => {
-    if (!window.confirm("Approve postingan ini?")) return;
-
-    try {
-      await approvePost(id);
-
-      setPosts(posts.map((post) =>
-        post.id === id ? { ...post, status: "approved" } : post
-      ));
-    } catch {
-      alert("Gagal approve");
-    }
+  const handleApprove = (id) => {
+    setModal({ open: true, action: "approve", id });
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Hapus postingan ini?")) return;
+  const handleDelete = (id) => {
+    setModal({ open: true, action: "delete", id });
+  };
 
+  const confirmAction = async () => {
     try {
-      await deletePost(id);
-      setPosts(posts.filter((post) => post.id !== id));
+      if (modal.action === "approve") {
+        await approvePost(modal.id);
+        setPosts(posts.map((p) =>
+          p.id === modal.id ? { ...p, status: "approved" } : p
+        ));
+      }
+
+      if (modal.action === "delete") {
+        await deletePost(modal.id);
+        setPosts(posts.filter((p) => p.id !== modal.id));
+      }
     } catch {
-      alert("Gagal hapus");
+      alert("Aksi gagal");
     }
+
+    setModal({ open: false, action: null, id: null });
   };
 
   if (loading) return <div className="p-8 text-zinc-400">Loading dashboard...</div>;
@@ -70,23 +80,9 @@ export default function AdminDashboard() {
 
       {/* STATS */}
       <div className="grid md:grid-cols-3 gap-6 mb-10">
-        <StatCard
-          label="Total Post"
-          value={stats.totalPosts}
-          icon={<FileText />}
-        />
-
-        <StatCard
-          label="Approved"
-          value={stats.approvedPosts}
-          icon={<CheckCircle />}
-        />
-
-        <StatCard
-          label="Pending"
-          value={stats.pendingPosts}
-          icon={<Clock />}
-        />
+        <StatCard label="Total Post" value={stats.totalPosts} icon={<FileText />} />
+        <StatCard label="Approved" value={stats.approvedPosts} icon={<CheckCircle />} />
+        <StatCard label="Pending" value={stats.pendingPosts} icon={<Clock />} />
       </div>
 
       {/* TABLE */}
@@ -141,6 +137,18 @@ export default function AdminDashboard() {
           </tbody>
         </table>
       </div>
+
+      {/* CONFIRM MODAL */}
+      <ConfirmModal
+        open={modal.open}
+        title={
+          modal.action === "delete"
+            ? "Hapus postingan ini?"
+            : "Approve postingan ini?"
+        }
+        onConfirm={confirmAction}
+        onCancel={() => setModal({ open: false, action: null, id: null })}
+      />
     </div>
   );
 }

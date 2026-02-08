@@ -1,4 +1,4 @@
-import { findLike, addLike, removeLike } from "../services/like.service.js";
+import { findLike, addLike, removeLike, findLikedPosts } from "../services/like.service.js";
 export const toggleLike = async (req, res) => {
   const userId = req.user.id;
   const postId = req.params.id;
@@ -12,4 +12,16 @@ export const toggleLike = async (req, res) => {
 
   await addLike(userId, postId);
   res.json({ liked: true });
+};
+
+export const getLikedPosts = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const posts = await findLikedPosts(userId);
+
+    res.json(posts);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Gagal mengambil liked posts" });
+  } 
 };
