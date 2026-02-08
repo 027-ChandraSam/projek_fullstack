@@ -1,12 +1,26 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import {
+  House,
+  PenLine,
+  LayoutDashboard,
+} from "lucide-react";
 
 export default function Sidebar({ open, close }) {
   const { user } = useAuth();
+  const location = useLocation();
+
+  const isActive = (path) => location.pathname === path;
+
+  const menuClass = (path) =>
+    `flex items-center gap-2 px-3 py-2 rounded transition ${
+      isActive(path)
+        ? "bg-orange-500/20 text-orange-400 border border-orange-500/30"
+        : "hover:bg-zinc-800 text-zinc-300"
+    }`;
 
   return (
     <>
-      {/* OVERLAY (MOBILE) */}
       {open && (
         <div
           onClick={close}
@@ -23,31 +37,31 @@ export default function Sidebar({ open, close }) {
           md:translate-x-0 md:flex
         `}
       >
-        <div className="w-full p-4 space-y-4 text-zinc-300 text-sm">
+        <div className="w-full p-4 space-y-6 text-sm">
 
           {/* MAIN */}
           <div>
             <p className="text-xs uppercase text-zinc-500 mb-2">Main</p>
-            <Link
-              to="/"
-              onClick={close}
-              className="block px-3 py-2 rounded hover:bg-zinc-800"
-            >
-              🏠 Home
+            <Link to="/" onClick={close} className={menuClass("/")}>
+              <House size={18} />
+              Home
             </Link>
           </div>
 
           {/* USER */}
           {user && (
             <div>
-              <p className="text-xs uppercase text-zinc-500 mb-2">Your Stuff</p>
+              <p className="text-xs uppercase text-zinc-500 mb-2">
+                Your Stuff
+              </p>
               <Link
                 to="/create"
                 onClick={close}
-                className="block px-3 py-2 rounded hover:bg-zinc-800"
+                className={menuClass("/create")}
               >
-                ✍️ Create Post
-              </Link> 
+                <PenLine size={18} />
+                Create Post
+              </Link>
             </div>
           )}
 
@@ -58,9 +72,10 @@ export default function Sidebar({ open, close }) {
               <Link
                 to="/Admin"
                 onClick={close}
-                className="block px-3 py-2 rounded hover:bg-zinc-800 text-orange-400"
+                className={menuClass("/Admin")}
               >
-                🛠 Dashboard
+                <LayoutDashboard size={18} />
+                Dashboard
               </Link>
             </div>
           )}
@@ -69,3 +84,4 @@ export default function Sidebar({ open, close }) {
     </>
   );
 }
+  

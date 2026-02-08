@@ -30,25 +30,32 @@ export const createPost = async (req, res) => {
  */
 export const getPosts = async (req, res) => {
   try {
-    const search = req.query.search?.trim();
-
+    const search = req.query.search?.toLowerCase().trim();
     let sql = `
       SELECT 
         posts.id,
         posts.title,
         posts.content,
         posts.created_at,
-        users.username
+        users.username,
+        categories.name AS category
       FROM posts
       JOIN users ON posts.user_id = users.id
+      LEFT JOIN categories ON posts.category_id = categories.id
       WHERE posts.status = 'approved'
     `;
 
     const params = [];
 
     if (search && search.length > 0) {
-      sql += ` AND posts.title LIKE ?`;
-      params.push(`%${search}%`);
+      sql += `
+        AND (
+          posts.title LIKE ?
+          OR users.username LIKE ?
+          OR categories.name LIKE ?
+        )
+      `;
+      params.push(`%${search}%`, `%${search}%`, `%${search}%`);
     }
 
     sql += ` ORDER BY posts.created_at DESC`;
@@ -150,35 +157,55 @@ export const deletePost = async (req, res) => {
  * APPROVED POST 
  */
 export const getApprovedPosts = async (req, res) => {
-  try {
-    const { search } = req.query;
+  const search = req.query.search?.toLowerCase() || "";
+  const page = Number(req.query.page) || 1;
+  const limit = 4;
+  const offset = (page - 1) * limit;
 
-    let sql = `
-      SELECT 
-        posts.*,
-        users.username,
-        categories.name AS category_name
-      FROM posts
-      JOIN users ON posts.user_id = users.id
-      LEFT JOIN categories ON posts.category_id = categories.id
-      WHERE posts.status = 'approved'`;
+  let where = "WHERE posts.status = 'approved'";
+  const params = [];
 
-    const params = [];
-
-    if (search) {
-      sql += " AND posts.title LIKE ?";
-      params.push(`%${search}%`);
-    }
-
-    sql += " ORDER BY posts.created_at DESC";
-
-    const [rows] = await db.query(sql, params);
-    res.json(rows);
-
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Server error" });
+  if (search) {
+    where += `
+      AND (
+        LOWER(posts.title) LIKE ?
+        OR LOWER(users.username) LIKE ?
+        OR LOWER(categories.name) LIKE ?
+      )
+    `;
+    params.push(`%${search}%`, `%${search}%`, `%${search}%`);
   }
+
+  const [[countResult]] = await db.query(
+    `
+    SELECT COUNT(*) as total
+    FROM posts
+    JOIN users ON posts.user_id = users.id
+    LEFT JOIN categories ON posts.category_id = categories.id
+    ${where}
+    `,
+    params
+  );
+
+  const totalPages = Math.ceil(countResult.total / limit);
+
+  const [rows] = await db.query(
+    `
+    SELECT posts.*, users.username, categories.name AS category_name
+    FROM posts
+    JOIN users ON posts.user_id = users.id
+    LEFT JOIN categories ON posts.category_id = categories.id
+    ${where}
+    ORDER BY posts.created_at DESC
+    LIMIT ? OFFSET ?
+    `,
+    [...params, limit, offset]
+  );
+
+  res.json({
+    data: rows,
+    totalPages
+  });
 };
 export const approvePost = async (req, res) => {
   try {
