@@ -25,14 +25,13 @@ export default function Profile() {
     setPosts(res.data);
   };
 
-  // Frontend
 const fetchLikedPosts = async () => {
-  const res = await api.get("/likes"); // GET /api/likes
+  const res = await api.get("/likes"); 
   setLikedPosts(res.data);
 };
 
 const fetchSavedPosts = async () => {
-  const res = await api.get("/saves"); // GET /api/saves  
+  const res = await api.get("/saves"); 
   setSavedPosts(res.data);
 };
 

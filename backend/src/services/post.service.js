@@ -74,3 +74,4 @@ export const approvePostService = async (postId) => {
     );
     return result;
 };
+

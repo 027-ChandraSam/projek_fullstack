@@ -4,6 +4,7 @@ import {
   House,
   PenLine,
   LayoutDashboard,
+  UserCog 
 } from "lucide-react";
 
 export default function Sidebar({ open, close }) {
@@ -76,6 +77,14 @@ export default function Sidebar({ open, close }) {
               >
                 <LayoutDashboard size={18} />
                 Dashboard
+              </Link>
+              <Link
+                to="/users"
+                onClick={close}
+                className={menuClass("/users")}
+              >
+                <UserCog size={18} />
+                User-Management
               </Link>
             </div>
           )}

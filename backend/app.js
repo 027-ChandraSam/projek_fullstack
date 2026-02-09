@@ -6,6 +6,7 @@ import interactionRoutes from "../backend/src/routes/interaction.route.js";
 import  getCategories  from "./src/controllers/category.controller.js";
 import likeRoutes from "./src/routes/like.route.js"; 
 import saveRoutes from "./src/routes/save.route.js"; 
+import userRoute from "./src/routes/user.route.js";
 
 
 
@@ -19,5 +20,6 @@ app.use("/api/posts", interactionRoutes);
 app.use("/api/categories", getCategories);
 app.use("/api/likes",likeRoutes );
 app.use("/api/saves",saveRoutes);
+app.use("/api/users", userRoute);
 
 export default app;

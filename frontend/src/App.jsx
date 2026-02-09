@@ -9,7 +9,7 @@ import CreatePost from "./components/CreatePost";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Profile from "./pages/Profile";
 import "./App.css";
-import Sidebar from "./components/Sidebar";
+import UsersPage from "./pages/Users";
 
 function App() {
   return (
@@ -61,13 +61,18 @@ function App() {
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
 
-
       <Route path="/profile" element={
         <MainLayout>
           <Profile/>
         </MainLayout>
       } />
+    <Route path="/users" element={
+      <MainLayout>
+        <UsersPage/>
+      </MainLayout>
+    }/>
     </Routes>
+    
   );
 }
 
